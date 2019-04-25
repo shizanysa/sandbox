@@ -1,0 +1,12 @@
+#cloud-config
+user: root
+ssh-authorized-keys:
+  - ssh-rsa ... 
+chpasswd:
+  list: |
+     root:...
+  expire: False
+hostname: test1
+runcmd:
+  - ip add a 192.168.1.10/24 dev eth0
+  - ip r add default via 192.168.1.1 dev eth0
