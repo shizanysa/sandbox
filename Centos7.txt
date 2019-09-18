@@ -1,0 +1,13 @@
+#cloud-config
+users:
+  - name: root
+    ssh-authorized-keys:
+     - ssh-rsa ... 
+chpasswd:
+  list: |
+     root:...
+  expire: False
+runcmd:
+  - ifdown eth0
+  - ifup eth0
+  - touch /etc/cloud/cloud-init.disabled

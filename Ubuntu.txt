@@ -1,0 +1,14 @@
+#cloud-config
+users:
+  - name: root
+    ssh-authorized-keys:
+     - ssh-rsa ... 
+chpasswd:
+  list: |
+     root:...
+  expire: False
+hostname: ubuntu
+runcmd:
+  - ip add a 192.168.0.205/24 dev enp1s0 
+  - ip r add default via 192.168.0.1 dev enp1s0
+  - touch /etc/cloud/cloud-init.disabled
