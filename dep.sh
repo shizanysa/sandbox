@@ -9,8 +9,11 @@ virsh destroy $1
 virsh undefine $1
 if [ -b /dev/vg00/$1 ]; then
   echo "Logical Volume $1 already exists in volume group "vg00""
+  echo "Remove lv $1"
+  lvremove -f /dev/vg00/$1
+  lvcreate -q -L $2 -n $1 vg00 --yes
 else
-  lvcreate -L $2G -n $1 vg00
+  lvcreate -q -L $2 -n $1 vg00 --yes
 fi
 
 if [ "$DISTR" == "Ubuntu" ]; then
