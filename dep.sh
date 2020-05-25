@@ -71,5 +71,5 @@ virt-install \
             --check all=off \
             --import 
 
-virsh change-media $1 sda --eject --config
+virsh change-media $1 hda --eject --config
 rm -f /cloud-init/machines/$3.iso
