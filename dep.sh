@@ -99,10 +99,14 @@ virt-install \
             --check all=off \
             --import 
 
+<<<<<<< HEAD
 if [ "$DISTR" == "Ubuntu" ]; then
 	virsh change-media $1 hda --eject --config
 else
 	virsh change-media $1 sda --eject --config
 fi
 
+=======
+virsh change-media $1 hda --eject --config
+>>>>>>> 04cb7632fc23c3c53bd3dbadd4135a005a8ef1f1
 rm -f /cloud-init/machines/$3.iso
