@@ -29,6 +29,21 @@ if [ "$DISTR" == "Ubuntu" ]; then
   dd if=/cloud-init/Ubuntu.raw of=/dev/vg00/$1 bs=4M status=progress
   echo ---dd done ----------
 
+  cd /cloud-init/machines/
+  cat > meta-data <<EOF
+  instance-id: $1
+  local-hostname: $1
+  network-interfaces: |
+    auto ens3
+    iface ens3 inet static
+    address $4
+    network 192.168.0.0
+    netmask 255.255.255.0
+    broadcast 192.168.0.255
+    gateway 192.168.0.1
+    dns-nameservers 8.8.8.8
+EOF
+
 #  sed -i "s/192.168.0.110/$4/" /cloud-init/machines/$3.txt 
 fi
 if [ "$DISTR" == "Centos7" ]; then
@@ -37,23 +52,36 @@ if [ "$DISTR" == "Centos7" ]; then
   echo ---dd done ----------
 #  sed -i "s/192.168.0.110/$4/" /cloud-init/machines/$3.txt
 
+  cd /cloud-init/machines/
+  cat > meta-data <<EOF
+  instance-id: $1
+  local-hostname: $1
+  network-interfaces: |
+    auto eth0
+    iface eth0 inet static
+    address $4
+    network 192.168.0.0
+    netmask 255.255.255.0
+    broadcast 192.168.0.255
+    gateway 192.168.0.1
+    dns-nameservers 8.8.8.8
+EOF
 fi
 
-cd /cloud-init/machines/
-cat > meta-data <<EOF
-instance-id: $1
-local-hostname: $1
-network-interfaces: |
-  auto eth0
-  iface eth0 inet static
-  address $4
-  network 192.168.0.0
-  netmask 255.255.255.0
-  broadcast 192.168.0.255
-  gateway 192.168.0.1
-  dns-nameservers 8.8.8.8
-# vim:syntax=yaml
-EOF
+#cd /cloud-init/machines/
+#cat > meta-data <<EOF
+#instance-id: $1
+#local-hostname: $1
+#network-interfaces: |
+#  auto eth0
+#  iface eth0 inet static
+#  address $4
+#  network 192.168.0.0
+#  netmask 255.255.255.0
+#  broadcast 192.168.0.255
+#  gateway 192.168.0.1
+#  dns-nameservers 8.8.8.8
+#EOF
 
 cloud-localds /cloud-init/machines/$3.iso /cloud-init/machines/$3.txt /cloud-init/machines/meta-data
 
@@ -71,5 +99,10 @@ virt-install \
             --check all=off \
             --import 
 
-virsh change-media $1 sda --eject --config
+if [ "$DISTR" == "Ubuntu" ]; then
+	virsh change-media $1 hda --eject --config
+else
+	virsh change-media $1 sda --eject --config
+fi
+
 rm -f /cloud-init/machines/$3.iso
