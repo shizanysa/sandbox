@@ -44,13 +44,11 @@ if [ "$DISTR" == "Ubuntu" ]; then
     dns-nameservers 8.8.8.8
 EOF
 
-#  sed -i "s/192.168.0.110/$4/" /cloud-init/machines/$3.txt 
 fi
 if [ "$DISTR" == "Centos7" ]; then
   echo ---dd copy ...-------
   dd if=/cloud-init/$3.raw of=/dev/vg00/$1 bs=4M status=progress
   echo ---dd done ----------
-#  sed -i "s/192.168.0.110/$4/" /cloud-init/machines/$3.txt
 
   cd /cloud-init/machines/
   cat > meta-data <<EOF
@@ -83,14 +81,14 @@ fi
 #  dns-nameservers 8.8.8.8
 #EOF
 
-cloud-localds /cloud-init/machines/$3.iso /cloud-init/machines/$3.txt /cloud-init/machines/meta-data
+cloud-localds /cloud-init/machines/$1.iso /cloud-init/machines/$3.txt /cloud-init/machines/meta-data
 
 virt-install \
             --name $1 \
 	    --vcpus $5 \
             --memory $6 \
             --disk /dev/vg00/$1,device=disk,bus=virtio \
-            --disk /cloud-init/machines/$3.iso,device=cdrom \
+            --disk /cloud-init/machines/$1.iso,device=cdrom \
             --os-type linux \
             --os-variant centos7.0 \
             --virt-type kvm \
@@ -99,14 +97,11 @@ virt-install \
             --check all=off \
             --import 
 
-<<<<<<< HEAD
 if [ "$DISTR" == "Ubuntu" ]; then
 	virsh change-media $1 hda --eject --config
 else
 	virsh change-media $1 sda --eject --config
 fi
 
-=======
 virsh change-media $1 hda --eject --config
->>>>>>> 04cb7632fc23c3c53bd3dbadd4135a005a8ef1f1
-rm -f /cloud-init/machines/$3.iso
+rm -f /cloud-init/machines/$1.iso
